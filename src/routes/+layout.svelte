@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '@fontsource-variable/geist-mono';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
@@ -9,3 +10,9 @@
 </svelte:head>
 
 {@render children()}
+
+<style lang="scss">
+	:global(body) {
+		font-family: 'Geist Mono Variable', monospace;
+	}
+</style>

@@ -3,7 +3,7 @@
 	import type { MouseEventHandler } from 'svelte/elements';
 	import Cell from './Cell.svelte';
 	import { defaultPuzzle } from './puzzleBank';
-	import { actives } from './play.svelte';
+	import { actives, puzzleState } from './play.svelte';
 
 	const puzzle = page.url.searchParams.get('puzzle') ?? defaultPuzzle;
 
@@ -13,6 +13,11 @@
 	if (n.length != 81) {
 		console.error('Error with puzzle');
 	}
+
+	for (const [index, item] of n.entries()) {
+		puzzleState.setValue(index, parseInt(item));
+	}
+	console.log(puzzleState);
 
 	const toggleAutoCandidate: MouseEventHandler<HTMLButtonElement> = () => {
 		actives.update((v) => {

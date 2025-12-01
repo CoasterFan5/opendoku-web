@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { actives } from './play.svelte';
+	import { getIndexesFromIndex } from './getIndexesFromIndex';
+	import { actives, puzzleState } from './play.svelte';
 	import type { MouseEventHandler } from 'svelte/elements';
 
 	const {
@@ -12,9 +13,8 @@
 
 	let realNumber = $state(val != '0');
 
-	let rowIndex = Math.floor(index / 9);
-	let colIndex = index % 9;
-	let houseIndex = Math.floor(rowIndex / 3) * 3 + Math.floor(colIndex / 3);
+	let { rowIndex, colIndex, houseIndex } = getIndexesFromIndex(index);
+	let candidates: number[] = $state([]);
 
 	const clickHandler: MouseEventHandler<HTMLButtonElement> = () => {
 		let trueValue = realNumber ? val : '-1';
@@ -50,6 +50,10 @@
 		} else {
 			semiActive = false;
 		}
+
+		if (v.autoCandidate) {
+			candidates = puzzleState.getCandidates(index);
+		}
 	});
 </script>
 
@@ -57,7 +61,15 @@
 	{#if realNumber}
 		{val}
 	{:else}
-		<grid class="candidates"> </grid>
+		<grid class="candidates">
+			{#each candidates as cand, i (i)}
+				<div class="candidate">
+					{#if cand != 0}
+						{cand}
+					{/if}
+				</div>
+			{/each}
+		</grid>
 	{/if}
 </button>
 
@@ -82,7 +94,19 @@
 	}
 
 	.candidates {
-		grid-template-columns: auto(1fr, 3);
-		grid-template-rows: auto(1fr, 3);
+		display: grid;
+		width: 100%;
+		height: 100%;
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: repeat(3, 1fr);
+
+		.candidate {
+			aspect-ratio: 1/1;
+			font-size: 0.9rem;
+			opacity: 0.5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 </style>

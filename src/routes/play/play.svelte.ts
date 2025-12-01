@@ -1,4 +1,7 @@
 import { writable } from 'svelte/store';
+import { Puzzle } from './puzzle';
+
+export const puzzleState = new Puzzle();
 
 type Actives = {
 	value: string;
