@@ -7,7 +7,7 @@
 
 	const puzzle = page.url.searchParams.get('puzzle') ?? defaultPuzzle;
 
-	const n = puzzle.split('');
+	const n = puzzle.replaceAll(/[^0-9]/gm, '').split('');
 	console.log(n);
 
 	if (n.length != 81) {
