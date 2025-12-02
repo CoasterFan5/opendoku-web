@@ -42,7 +42,6 @@
 		grid-template-rows: repeat(9, 1fr);
 		aspect-ratio: 1/1;
 		background: black;
-		gap: 1px;
 		border: 1px solid black;
 		max-height: 80dvh;
 		max-width: 80vw;
