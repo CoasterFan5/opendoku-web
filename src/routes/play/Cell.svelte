@@ -3,15 +3,16 @@
 	import { actives, puzzleState } from './play.svelte';
 	import type { KeyboardEventHandler, MouseEventHandler } from 'svelte/elements';
 
-	const {
-		val,
+	let {
+		val = $bindable(''),
 		index
 	}: {
 		val: string;
 		index: number;
 	} = $props();
 
-	let realNumber = $state(val != '0');
+	let realNumber = $derived(val != '0');
+	let placedValue = $state(false);
 
 	let { rowIndex, colIndex, houseIndex } = getIndexesFromIndex(index);
 	let candidates: number[] = $state([]);
@@ -30,7 +31,20 @@
 	};
 
 	const inputHandler: KeyboardEventHandler<HTMLButtonElement> = (e) => {
-		console.log(e.key);
+		const p = parseInt(e.key);
+		if (!isNaN(p)) {
+			console.log(p);
+			val = `${p}`;
+			candidates = [];
+			if (!puzzleState.setValue(index, p)) {
+				console.error('COuld not place');
+			}
+			placedValue = true;
+			actives.update((v) => {
+				v.autoCandidate = true;
+				return v;
+			});
+		}
 	};
 
 	let active = $state(false);
@@ -56,6 +70,7 @@
 		}
 
 		if (v.autoCandidate) {
+			console.log('getting candidates');
 			candidates = puzzleState.getCandidates(index);
 		}
 	});
@@ -71,6 +86,7 @@
 	class:leftBorder={index % 3 == 0}
 	class:bottomBorder={(Math.floor(index / 9) + 1) % 3 == 0}
 	class:topBorder={Math.floor(index / 9) % 3 == 0}
+	class:placed={placedValue}
 >
 	{#if realNumber}
 		{val}
@@ -117,12 +133,16 @@
 		border-top: 1px solid black;
 	}
 
+	.placed {
+		color: #ff960b;
+	}
+
 	.semiActive {
 		background: color-mix(in srgb, 10% rgba(255, 167, 41, 1), 90% white);
 	}
 
 	.active {
-		background: color-mix(in srgb, 75% rgba(255, 167, 41, 1), 100% white);
+		background: color-mix(in srgb, 50% rgba(255, 167, 41, 1), 50% white);
 	}
 
 	.candidates {
