@@ -8,4 +8,4 @@
 <p>Use /play?puzzle=(81 numbers)</p>
 
 <input placeholder="puzzle" bind:value={puzzleValue} />
-<a href="{resolve('/play')}?puzzle={puzzleValue}">Go</a>
+<a href="{resolve('/play')}?puzzle={puzzleValue.replaceAll(/[^0-9]/gm, '')}">Go</a>
