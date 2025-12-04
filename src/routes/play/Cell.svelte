@@ -11,8 +11,10 @@
 		index: number;
 	} = $props();
 
+	const locked = val != '0';
 	let realNumber = $derived(val != '0');
 	let placedValue = $state(false);
+	let isError = $state(false);
 
 	let { rowIndex, colIndex, houseIndex } = getIndexesFromIndex(index);
 	let candidates: number[] = $state([]);
@@ -31,15 +33,33 @@
 	};
 
 	const inputHandler: KeyboardEventHandler<HTMLButtonElement> = (e) => {
-		const p = parseInt(e.key);
+		isError = false;
+		if (locked) {
+			return;
+		}
+
+		let p = parseInt(e.key);
+
+		if (e.key == 'Backspace') {
+			p = 0;
+		}
+
 		if (!isNaN(p)) {
-			console.log(p);
 			val = `${p}`;
-			candidates = [];
 			if (!puzzleState.setValue(index, p)) {
-				console.error('COuld not place');
+				console.error('Invalid Place');
+				isError = true;
+				return;
 			}
-			placedValue = true;
+
+			candidates = [];
+
+			if (p === 0) {
+				placedValue = false;
+			} else {
+				placedValue = true;
+			}
+
 			actives.update((v) => {
 				v.autoCandidate = true;
 				return v;
@@ -70,7 +90,6 @@
 		}
 
 		if (v.autoCandidate) {
-			console.log('getting candidates');
 			candidates = puzzleState.getCandidates(index);
 		}
 	});
@@ -81,12 +100,13 @@
 	class:active
 	class:semiActive
 	onclick={clickHandler}
-	onkeypress={inputHandler}
+	onkeydown={inputHandler}
 	class:rightBorder={(index + 1) % 3 == 0}
 	class:leftBorder={index % 3 == 0}
 	class:bottomBorder={(Math.floor(index / 9) + 1) % 3 == 0}
 	class:topBorder={Math.floor(index / 9) % 3 == 0}
 	class:placed={placedValue}
+	class:error={isError}
 >
 	{#if realNumber}
 		{val}
@@ -135,6 +155,10 @@
 
 	.placed {
 		color: #ff960b;
+	}
+
+	.error {
+		color: red !important;
 	}
 
 	.semiActive {

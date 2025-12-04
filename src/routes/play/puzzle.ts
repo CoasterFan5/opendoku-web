@@ -16,19 +16,22 @@ export class Puzzle {
 	setValue(index: number, value: number): boolean {
 		const { rowIndex, colIndex, houseIndex } = getIndexesFromIndex(index);
 
-		if (value == 0) {
-			return true;
+		if (value !== 0) {
+			if (this.rowInvalids[rowIndex].includes(value)) {
+				return false;
+			}
+			if (this.colInvalids[colIndex].includes(value)) {
+				return false;
+			}
+			if (this.houseInvalids[houseIndex].includes(value)) {
+				return false;
+			}
 		}
 
-		if (this.rowInvalids[rowIndex].includes(value)) {
-			return false;
-		}
-		if (this.colInvalids[colIndex].includes(value)) {
-			return false;
-		}
-		if (this.houseInvalids[houseIndex].includes(value)) {
-			return false;
-		}
+		const oldValue = this.puzzleNumbers[index];
+		this.rowInvalids[rowIndex] = this.rowInvalids[rowIndex].filter((v) => v != oldValue);
+		this.colInvalids[colIndex] = this.colInvalids[colIndex].filter((v) => v != oldValue);
+		this.houseInvalids[houseIndex] = this.houseInvalids[houseIndex].filter((v) => v != oldValue);
 
 		this.puzzleNumbers[index] = value;
 		this.rowInvalids[rowIndex].push(value);

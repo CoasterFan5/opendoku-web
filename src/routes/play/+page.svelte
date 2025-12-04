@@ -8,7 +8,6 @@
 	const puzzle = page.url.searchParams.get('puzzle') ?? defaultPuzzle;
 
 	const n = puzzle.replaceAll(/[^0-9]/gm, '').split('');
-	console.log(n);
 
 	if (n.length != 81) {
 		console.error('Error with puzzle');
@@ -17,7 +16,6 @@
 	for (const [index, item] of n.entries()) {
 		puzzleState.setValue(index, parseInt(item));
 	}
-	console.log(puzzleState);
 
 	const toggleAutoCandidate: MouseEventHandler<HTMLButtonElement> = () => {
 		actives.update((v) => {
